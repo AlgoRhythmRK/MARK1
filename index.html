@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Mess Menu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e9f5ff; /* Light blue background for a fresh look */
+        }
+        header {
+            background-color: #53973d; /* Hostel theme color */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        h2 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        .menu-section {
+            margin: 40px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px; /* Make it responsive */
+        }
+        .meal-option {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #007acc; /* Border to highlight meal options */
+            border-radius: 8px;
+            transition: background 0.3s; /* Smooth hover effect */
+        }
+        .meal-option:hover {
+            background-color: #f0f9ff; /* Light hover effect */
+        }
+        .meal-option label {
+            margin-left: 10px;
+            font-size: 1.2em;
+        }
+        .payment-btn {
+            background-color: #1f4cee;
+            color: rgb(236, 238, 239);
+            padding: 15px 30px;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background 0.3s; /* Smooth hover effect */
+        }
+        .payment-btn:hover {
+            background-color: #005999; /* Darker shade on hover */
+        }
+        .center-btn {
+            text-align: center;
+            margin-top: 20px;
+            display: none; /* Initially hidden */
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Hostel Mess Menu</h1>
+        <p>Date: <span id="current-date"></span></p>
+    </header>
+
+    <section class="menu-section">
+        <h2>Select Your Meal</h2>
+        <div class="meal-option">
+            <input type="radio" id="breakfast" name="meal" value="30">
+            <label for="breakfast">Breakfast (Idli & Sambar) - ₹30</label>
+        </div>
+        <div class="meal-option">
+            <input type="radio" id="lunch" name="meal" value="50">
+            <label for="lunch">Lunch (Veg Thali) - ₹50</label>
+        </div>
+        <div class="meal-option">
+            <input type="radio" id="dinner" name="meal" value="45">
+            <label for="dinner">Dinner (Chapati & Curry) - ₹45</label>
+        </div>
+    </section>
+
+    <!-- Centered Payment Button -->
+    <div class="center-btn" id="pay-section">
+        <button class="payment-btn" id="rzp-button">Pay Now</button>
+    </div>
+
+    <!-- Razorpay Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <!-- Razorpay Integration Script -->
+    <script>
+        var amount = 0;
+
+        // Update amount and show payment button when a meal is selected
+        document.querySelectorAll('input[name="meal"]').forEach((meal) => {
+            meal.addEventListener('change', function() {
+                amount = this.value * 100;  // Razorpay expects the amount in paise
+                document.getElementById('pay-section').style.display = 'block'; // Show the payment button
+            });
+        });
+
+        var options = {
+            "key": "YOUR_KEY_ID", // Enter the Key ID generated from the Razorpay Dashboard
+            "amount": "0", // This will be dynamically updated based on the selected meal
+            "currency": "INR",
+            "name": "Hostel Mess",
+            "description": "Meal Order",
+            "handler": function (response){
+                alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
+            },
+            "theme": {
+                "color": "#F37254"
+            }
+        };
+
+        document.getElementById('rzp-button').onclick = function(e){
+            options.amount = amount;  // Set the selected meal's amount dynamically
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+            e.preventDefault();
+        };
+    </script>
+
+    <!-- Script to Display Current Date -->
+    <script>
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString();
+    </script>
+</body>
+</html>
